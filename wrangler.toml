@@ -1,0 +1,32 @@
+# ==========================================
+# Cloudflare Workers 配置文件
+# ==========================================
+
+name = "zmansys-api"
+main = "worker/index.js"
+compatibility_date = "2024-01-01"
+
+# D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "zmansys-db"
+database_id = "YOUR_DATABASE_ID"  # 运行 wrangler d1 create zmansys-db 后替换
+
+# CORS 配置（允许前端访问）
+[vars]
+ALLOWED_ORIGINS = "*"
+
+# 路由配置（部署到自定义域名时使用）
+# routes = [
+#   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+# 开发环境配置
+[env.dev]
+name = "zmansys-api-dev"
+
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "zmansys-db-dev"
+database_id = "YOUR_DEV_DATABASE_ID"
+
