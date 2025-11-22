@@ -12,7 +12,7 @@ let selectedDates = new Set();
 let workRecords = {};
 
 // 初始化
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   console.log('员工日历页已加载');
   
   // 获取员工ID
@@ -27,54 +27,60 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // 加载员工信息
-  loadEmployee(employeeId);
-  
-  // 加载工时记录
-  loadWorkRecords(employeeId);
-  
   // 绑定事件
   bindEvents();
+  
+  // 加载员工信息
+  await loadEmployee(employeeId);
+  
+  // 加载工时记录
+  await loadWorkRecords(employeeId);
   
   // 渲染日历
   renderCalendar();
 });
 
 // 加载员工信息
-function loadEmployee(id) {
-  const employees = JSON.parse(localStorage.getItem('employees') || '[]');
-  currentEmployee = employees.find(e => e.id == id);
-  
-  if (!currentEmployee) {
-    showMessage('员工不存在');
+async function loadEmployee(id) {
+  try {
+    const response = await getEmployee(id);
+    if (response.success) {
+      currentEmployee = response.data;
+      
+      // 更新页面显示
+      document.getElementById('employeeName').textContent = currentEmployee.name;
+      document.getElementById('employeeRate').textContent = 
+        `默认时薪: ¥${currentEmployee.default_hourly_rate}/小时`;
+    } else {
+      showMessage('员工不存在');
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    }
+  } catch (error) {
+    console.error('加载员工失败:', error);
+    showMessage('无法连接到服务器');
     setTimeout(() => {
       window.location.href = 'index.html';
     }, 1500);
-    return;
   }
-  
-  // 更新页面显示
-  document.getElementById('employeeName').textContent = currentEmployee.name;
-  document.getElementById('employeeRate').textContent = 
-    `默认时薪: ¥${currentEmployee.default_hourly_rate}/小时`;
 }
 
 // 加载工时记录
-function loadWorkRecords(employeeId) {
-  const data = localStorage.getItem(`work_records_${employeeId}`);
-  const records = data ? JSON.parse(data) : [];
-  
-  // 转换为 Map 方便查询
-  workRecords = {};
-  records.forEach(record => {
-    workRecords[record.date] = record;
-  });
-}
-
-// 保存工时记录
-function saveWorkRecords() {
-  const records = Object.values(workRecords);
-  localStorage.setItem(`work_records_${currentEmployee.id}`, JSON.stringify(records));
+async function loadWorkRecords(employeeId) {
+  try {
+    const response = await getWorkRecords(employeeId, currentYear, currentMonth + 1);
+    if (response.success) {
+      // 转换为 Map 方便查询
+      workRecords = {};
+      response.data.records.forEach(record => {
+        workRecords[record.date] = record;
+      });
+    }
+  } catch (error) {
+    console.error('加载工时记录失败:', error);
+    workRecords = {};
+  }
 }
 
 // 绑定事件
@@ -383,7 +389,7 @@ function toggleBatchInputMode(mode) {
 }
 
 // 保存单日记录
-function saveSingleDayRecord() {
+async function saveSingleDayRecord() {
   if (!selectedDate) return;
   
   const inputMethod = document.querySelector('input[name="inputMethod"]:checked').value;
@@ -417,44 +423,66 @@ function saveSingleDayRecord() {
     return;
   }
   
-  // 保存记录
-  workRecords[selectedDate] = {
-    id: workRecords[selectedDate]?.id || Date.now(),
-    employee_id: currentEmployee.id,
-    date: selectedDate,
-    hours: hours,
-    hourly_rate: rate,
-    start_time: startTime,
-    end_time: endTime,
-    notes: notes,
-    updated_at: new Date().toISOString()
-  };
-  
-  saveWorkRecords();
-  renderCalendar();
-  showMessage('保存成功');
-  
-  // 重新选中当前日期以刷新表单
-  const dateElement = document.querySelector(`.day[data-date="${selectedDate}"]`);
-  if (dateElement) {
-    dateElement.classList.add('selected');
-    showSingleDayForm(selectedDate);
+  try {
+    // 调用 API 保存记录
+    const response = await saveWorkRecord({
+      employee_id: currentEmployee.id,
+      date: selectedDate,
+      hours: hours,
+      hourly_rate: rate,
+      start_time: startTime,
+      end_time: endTime,
+      notes: notes
+    });
+    
+    if (response.success) {
+      showMessage('保存成功');
+      
+      // 重新加载工时记录
+      await loadWorkRecords(currentEmployee.id);
+      renderCalendar();
+      
+      // 重新选中当前日期以刷新表单
+      const dateElement = document.querySelector(`.day[data-date="${selectedDate}"]`);
+      if (dateElement) {
+        dateElement.classList.add('selected');
+        showSingleDayForm(selectedDate);
+      }
+    } else {
+      showMessage('保存失败');
+    }
+  } catch (error) {
+    console.error('保存工时失败:', error);
+    showMessage('保存失败，请重试');
   }
 }
 
 // 删除记录
-function deleteRecord() {
+async function deleteRecord() {
   if (!selectedDate || !workRecords[selectedDate]) return;
   
   if (!confirmAction('确定要删除这条工时记录吗？')) {
     return;
   }
   
-  delete workRecords[selectedDate];
-  saveWorkRecords();
-  renderCalendar();
-  clearSelection();
-  showMessage('记录已删除');
+  try {
+    const recordId = workRecords[selectedDate].id;
+    const response = await deleteWorkRecord(recordId);
+    
+    if (response.success) {
+      showMessage('记录已删除');
+      
+      // 重新加载工时记录
+      await loadWorkRecords(currentEmployee.id);
+      renderCalendar();
+      clearSelection();
+    } else {
+      showMessage('删除失败');
+    }
+  } catch (error) {
+    console.error('删除工时失败:', error);
+    showMessage('删除失败，请重试');
+  }
 }
 
 // 清除选择
@@ -507,36 +535,37 @@ function hideStatistics() {
 }
 
 // 更新统计数据
-function updateStatistics() {
+async function updateStatistics() {
   const dates = Array.from(selectedDates);
-  let totalHours = 0;
-  let totalSalary = 0;
-  let totalRateWeighted = 0;
-  let validDays = 0;
   
-  dates.forEach(date => {
-    if (workRecords[date]) {
-      const hours = workRecords[date].hours;
-      const rate = workRecords[date].hourly_rate;
-      totalHours += hours;
-      totalSalary += hours * rate;
-      totalRateWeighted += rate * hours; // 加权平均
-      validDays++;
+  if (dates.length === 0) {
+    return;
+  }
+  
+  try {
+    const response = await getStatistics(currentEmployee.id, dates);
+    
+    if (response.success) {
+      const stats = response.data;
+      document.getElementById('selectedDaysCount').textContent = dates.length;
+      document.getElementById('totalHours').textContent = `${stats.total_hours.toFixed(1)}h`;
+      document.getElementById('avgHours').textContent = `${stats.average_hours.toFixed(1)}h`;
+      document.getElementById('avgRate').textContent = `¥${stats.avg_rate.toFixed(0)}`;
+      document.getElementById('totalSalary').textContent = `¥${stats.total_salary.toFixed(0)}`;
     }
-  });
-  
-  const avgHours = validDays > 0 ? totalHours / validDays : 0;
-  const avgRate = totalHours > 0 ? totalRateWeighted / totalHours : 0; // 加权平均时薪
-  
-  document.getElementById('selectedDaysCount').textContent = dates.length;
-  document.getElementById('totalHours').textContent = `${totalHours.toFixed(1)}h`;
-  document.getElementById('avgHours').textContent = `${avgHours.toFixed(1)}h`;
-  document.getElementById('avgRate').textContent = `¥${avgRate.toFixed(0)}`;
-  document.getElementById('totalSalary').textContent = `¥${totalSalary.toFixed(0)}`;
+  } catch (error) {
+    console.error('获取统计失败:', error);
+    // 显示默认值
+    document.getElementById('selectedDaysCount').textContent = dates.length;
+    document.getElementById('totalHours').textContent = '0.0h';
+    document.getElementById('avgHours').textContent = '0.0h';
+    document.getElementById('avgRate').textContent = '¥0';
+    document.getElementById('totalSalary').textContent = '¥0';
+  }
 }
 
 // 切换月份
-function changeMonth(delta) {
+async function changeMonth(delta) {
   currentMonth += delta;
   
   if (currentMonth < 0) {
@@ -549,6 +578,9 @@ function changeMonth(delta) {
   
   clearSelection();
   clearMultiSelection();
+  
+  // 重新加载当前月的工时记录
+  await loadWorkRecords(currentEmployee.id);
   renderCalendar();
 }
 
@@ -609,7 +641,7 @@ function updateBatchCount() {
 }
 
 // 批量保存记录
-function saveBatchRecords() {
+async function saveBatchRecords() {
   const selectedCheckboxes = document.querySelectorAll('#batchDateList input[type="checkbox"]:checked');
   
   if (selectedCheckboxes.length === 0) {
@@ -648,25 +680,32 @@ function saveBatchRecords() {
     return;
   }
   
-  // 批量保存
-  selectedCheckboxes.forEach(checkbox => {
-    const dateString = checkbox.value;
-    workRecords[dateString] = {
-      id: workRecords[dateString]?.id || Date.now() + Math.random(),
+  try {
+    // 收集所有日期
+    const dates = Array.from(selectedCheckboxes).map(cb => cb.value);
+    
+    // 调用批量保存 API
+    const response = await batchSaveWorkRecords({
       employee_id: currentEmployee.id,
-      date: dateString,
+      dates: dates,
       hours: hours,
       hourly_rate: rate,
-      start_time: startTime,
-      end_time: endTime,
-      notes: notes,
-      updated_at: new Date().toISOString()
-    };
-  });
-  
-  saveWorkRecords();
-  renderCalendar();
-  closeBatchModal();
-  showMessage(`已为 ${selectedCheckboxes.length} 天添加工时记录`);
+      notes: notes
+    });
+    
+    if (response.success) {
+      showMessage(`已为 ${dates.length} 天添加工时记录`);
+      
+      // 重新加载工时记录
+      await loadWorkRecords(currentEmployee.id);
+      renderCalendar();
+      closeBatchModal();
+    } else {
+      showMessage('保存失败');
+    }
+  } catch (error) {
+    console.error('批量保存失败:', error);
+    showMessage('保存失败，请重试');
+  }
 }
 

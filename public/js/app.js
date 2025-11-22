@@ -7,43 +7,34 @@ let employees = [];
 let currentEditId = null;
 
 // 初始化
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   console.log('员工列表页已加载');
-  
-  // 加载员工数据
-  loadEmployees();
   
   // 绑定事件
   bindEvents();
+  
+  // 从 API 加载员工数据
+  await loadEmployees();
   
   // 渲染员工列表
   renderEmployees();
 });
 
-// 从 localStorage 加载员工数据
-function loadEmployees() {
-  const data = localStorage.getItem('employees');
-  if (data) {
-    employees = JSON.parse(data);
-  } else {
-    // 初始化示例数据
-    employees = [
-      {
-        id: 1,
-        name: '的吧',
-        location: 'cn',
-        default_hourly_rate: 20,
-        notes: 'q',
-        created_at: new Date().toISOString()
-      }
-    ];
-    saveEmployees();
+// 从 API 加载员工数据
+async function loadEmployees() {
+  try {
+    const response = await getEmployees();
+    if (response.success) {
+      employees = response.data;
+    } else {
+      showMessage('加载员工数据失败');
+      employees = [];
+    }
+  } catch (error) {
+    console.error('加载员工失败:', error);
+    showMessage('无法连接到服务器');
+    employees = [];
   }
-}
-
-// 保存员工数据到 localStorage
-function saveEmployees() {
-  localStorage.setItem('employees', JSON.stringify(employees));
 }
 
 // 绑定事件
@@ -96,8 +87,8 @@ function renderEmployees(searchQuery = '') {
 
 // 创建员工卡片 HTML
 function createEmployeeCard(employee) {
-  const weeklyHours = calculateWeeklyHours(employee.id);
-  const monthlyHours = calculateMonthlyHours(employee.id);
+  const weeklyHours = employee.weekly_hours || 0;
+  const monthlyHours = employee.monthly_hours || 0;
   
   return `
     <div class="employee-card" data-employee-id="${employee.id}">
@@ -132,7 +123,7 @@ function createEmployeeCard(employee) {
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
           </button>
-          <button class="icon-btn delete-btn" data-employee-id="${employee.id}" onclick="event.stopPropagation(); deleteEmployee(${employee.id})">
+          <button class="icon-btn delete-btn" data-employee-id="${employee.id}" onclick="event.stopPropagation(); deleteEmployeeWithConfirm(${employee.id})">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -154,37 +145,7 @@ function bindCardEvents() {
   });
 }
 
-// 计算本周工时
-function calculateWeeklyHours(employeeId) {
-  const records = getWorkRecords(employeeId);
-  const weekStart = formatDate(getWeekStart());
-  const today = formatDate(new Date());
-  
-  return records
-    .filter(r => {
-      return r.date >= weekStart && r.date <= today;
-    })
-    .reduce((sum, r) => sum + r.hours, 0);
-}
-
-// 计算本月工时
-function calculateMonthlyHours(employeeId) {
-  const records = getWorkRecords(employeeId);
-  const monthStart = formatDate(getMonthStart());
-  const today = formatDate(new Date());
-  
-  return records
-    .filter(r => {
-      return r.date >= monthStart && r.date <= today;
-    })
-    .reduce((sum, r) => sum + r.hours, 0);
-}
-
-// 获取工时记录（从 localStorage）
-function getWorkRecords(employeeId) {
-  const data = localStorage.getItem(`work_records_${employeeId}`);
-  return data ? JSON.parse(data) : [];
-}
+// 注意：本周/本月工时现在由 API 直接返回，不需要本地计算
 
 // 打开添加员工 Modal
 function openAddModal() {
@@ -216,7 +177,7 @@ function closeModal() {
 }
 
 // 处理表单提交
-function handleFormSubmit(e) {
+async function handleFormSubmit(e) {
   e.preventDefault();
   
   const name = document.getElementById('employeeName').value.trim();
@@ -229,38 +190,40 @@ function handleFormSubmit(e) {
     return;
   }
   
-  if (currentEditId) {
-    // 更新员工
-    const employee = employees.find(e => e.id === currentEditId);
-    if (employee) {
-      employee.name = name;
-      employee.location = location;
-      employee.default_hourly_rate = rate;
-      employee.notes = notes;
-      employee.updated_at = new Date().toISOString();
+  try {
+    if (currentEditId) {
+      // 更新员工
+      await updateEmployee(currentEditId, {
+        name,
+        location,
+        default_hourly_rate: rate,
+        notes
+      });
+      showMessage('员工信息已更新');
+    } else {
+      // 新增员工
+      await createEmployee({
+        name,
+        location,
+        default_hourly_rate: rate,
+        notes
+      });
+      showMessage('员工添加成功');
     }
-  } else {
-    // 新增员工
-    const newEmployee = {
-      id: Date.now(),
-      name,
-      location,
-      default_hourly_rate: rate,
-      notes,
-      created_at: new Date().toISOString()
-    };
-    employees.push(newEmployee);
+    
+    // 重新加载员工列表
+    await loadEmployees();
+    renderEmployees();
+    closeModal();
+  } catch (error) {
+    console.error('保存员工失败:', error);
+    showMessage('保存失败，请重试');
   }
-  
-  saveEmployees();
-  renderEmployees();
-  closeModal();
-  showMessage(currentEditId ? '员工信息已更新' : '员工添加成功');
 }
 
 // 删除员工（需要输入姓名确认）
-function deleteEmployee(id) {
-  const employee = employees.find(e => e.id === id);
+async function deleteEmployeeWithConfirm(id) {
+  const employee = employees.find(e => e.id == id);
   if (!employee) return;
   
   const confirmName = prompt(`请输入员工姓名 "${employee.name}" 以确认删除：`);
@@ -272,15 +235,22 @@ function deleteEmployee(id) {
     return;
   }
   
-  // 删除员工
-  employees = employees.filter(e => e.id !== id);
-  saveEmployees();
-  
-  // 同时删除工时记录
-  localStorage.removeItem(`work_records_${id}`);
-  
-  renderEmployees();
-  showMessage('员工已删除');
+  try {
+    // 调用 API 删除员工（会自动级联删除工时记录）
+    const response = await deleteEmployee(id);
+    
+    if (response.success) {
+      // 重新加载员工列表
+      await loadEmployees();
+      renderEmployees();
+      showMessage('员工已删除');
+    } else {
+      showMessage('删除失败');
+    }
+  } catch (error) {
+    console.error('删除员工失败:', error);
+    showMessage('删除失败，请重试');
+  }
 }
 
 // 跳转到日历页
