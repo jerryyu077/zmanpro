@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (!employeeId) {
     showMessage('未找到员工信息');
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.href = '/';
     }, 1500);
     return;
   }
@@ -54,14 +54,14 @@ async function loadEmployee(id) {
     } else {
       showMessage('员工不存在');
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/';
       }, 1500);
     }
   } catch (error) {
     console.error('加载员工失败:', error);
     showMessage('无法连接到服务器');
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.href = '/';
     }, 1500);
   }
 }
@@ -87,7 +87,7 @@ async function loadWorkRecords(employeeId) {
 function bindEvents() {
   // 返回按钮
   document.getElementById('backBtn').addEventListener('click', function() {
-    window.location.href = 'index.html';
+    window.location.href = '/';
   });
   
   // 批量输入按钮

@@ -255,6 +255,6 @@ async function deleteEmployeeWithConfirm(id) {
 
 // 跳转到日历页
 function goToCalendar(employeeId) {
-  window.location.href = `calendar.html?id=${employeeId}`;
+  window.location.href = `calendar?id=${employeeId}`;
 }
 
