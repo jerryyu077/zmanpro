@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="light-content">
+  <title>员工工时日历</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部导航 -->
+    <div class="calendar-header">
+      <!-- 返回按钮 -->
+      <button class="back-btn" id="backBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+
+      <!-- 员工信息 -->
+      <div class="employee-title">
+        <h1 id="employeeName">的吧</h1>
+        <p id="employeeRate">默认时薪: ¥20/小时</p>
+      </div>
+
+      <!-- 批量输入按钮 -->
+      <button class="action-btn" id="batchInputBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          <line x1="3" y1="10" x2="9" y2="10"></line>
+          <line x1="3" y1="14" x2="9" y2="14"></line>
+        </svg>
+      </button>
+
+      <!-- 多选日期按钮 -->
+      <button class="action-btn" id="multiSelectBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 11 12 14 22 4"></polyline>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 月份切换 -->
+    <div class="month-switcher">
+      <button id="prevMonthBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <h2 id="currentMonth">2025年11月</h2>
+      <button id="nextMonthBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 日历 -->
+    <div class="calendar">
+      <div class="calendar-weekdays">
+        <div class="weekday">日</div>
+        <div class="weekday">一</div>
+        <div class="weekday">二</div>
+        <div class="weekday">三</div>
+        <div class="weekday">四</div>
+        <div class="weekday">五</div>
+        <div class="weekday">六</div>
+      </div>
+      <div class="calendar-days" id="calendarDays">
+        <!-- 日历日期会动态生成 -->
+      </div>
+    </div>
+
+    <!-- 底部表单/统计区域 -->
+    <div id="bottomSection">
+      <!-- 默认提示 -->
+      <div class="form-section" id="placeholderSection">
+        <div class="placeholder-text">请选择日期</div>
+      </div>
+
+      <!-- 单日工时表单 -->
+      <div class="form-section hidden" id="singleDayForm">
+        <div class="form-title">
+          <h3 id="selectedDate">2025年11月11日</h3>
+          <button class="clear-btn" id="clearSelection">清除选择</button>
+        </div>
+
+        <!-- 输入方式选择 -->
+        <div class="form-group">
+          <label class="form-label">输入方式</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="inputDirect" name="inputMethod" value="direct" checked>
+              <label for="inputDirect">直接输入工时</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="inputRange" name="inputMethod" value="range">
+              <label for="inputRange">时间范围</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 直接输入工时模式 -->
+        <div id="directInputMode">
+          <div class="form-group">
+            <label class="form-label">工作时长（小时）</label>
+            <input type="number" class="input-field" id="workHours" placeholder="8.5" step="0.5" min="0">
+          </div>
+        </div>
+
+        <!-- 时间范围模式 -->
+        <div id="rangeInputMode" class="hidden">
+          <div class="time-inputs">
+            <div class="time-input-group">
+              <div class="time-label start">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                开始时间
+              </div>
+              <input type="time" class="input-field" id="startTimeInput" style="text-align: center;">
+            </div>
+
+            <div class="time-input-group">
+              <div class="time-label end">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                结束时间
+              </div>
+              <input type="time" class="input-field" id="endTimeInput" style="text-align: center;">
+            </div>
+          </div>
+
+          <!-- 自动计算工时 -->
+          <div class="calculated-hours hidden" id="calculatedHours">
+            <div class="calculated-hours-label">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="8" x2="8" y2="16"></line>
+                <line x1="8" y1="8" x2="16" y2="16"></line>
+                <line x1="12" y1="12" x2="12" y2="16"></line>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+              </svg>
+              计算工时
+            </div>
+            <div class="calculated-hours-value" id="calculatedHoursValue">0.0小时</div>
+          </div>
+        </div>
+
+        <!-- 当天时薪 -->
+        <div class="form-group">
+          <label class="form-label">当天时薪（元/小时）</label>
+          <input type="number" class="input-field" id="dailyRate" placeholder="20" step="0.5" min="0">
+        </div>
+
+        <!-- 备注 -->
+        <div class="form-group">
+          <label class="form-label">备注</label>
+          <textarea class="input-field" id="workNotes" placeholder="工作内容、项目名称等..."></textarea>
+        </div>
+
+        <!-- 表单按钮 -->
+        <div class="form-actions" id="formActions">
+          <button type="button" class="btn btn-save" id="saveBtn">保存</button>
+        </div>
+
+        <!-- 编辑模式按钮（有删除按钮） -->
+        <div class="form-actions two-buttons hidden" id="editActions">
+          <button type="button" class="btn btn-delete" id="deleteBtn">删除</button>
+          <button type="button" class="btn btn-save" id="updateBtn">保存</button>
+        </div>
+      </div>
+
+      <!-- 多选统计卡片 -->
+      <div class="statistics-card hidden" id="statisticsCard">
+        <div class="statistics-header">
+          <div class="statistics-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>汇总信息（<span id="selectedDaysCount">0</span>天）</span>
+          </div>
+          <button class="clear-btn" id="clearMultiSelection">清除选择</button>
+        </div>
+
+        <div class="statistics-grid">
+          <div class="stat-item">
+            <div class="stat-item-label">总工时</div>
+            <div class="stat-item-value blue" id="totalHours">0.0h</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-label">日均工时</div>
+            <div class="stat-item-value green" id="avgHours">0.0h</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-label">平均时薪</div>
+            <div class="stat-item-value purple" id="avgRate">¥0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-label">总工资</div>
+            <div class="stat-item-value orange" id="totalSalary">¥0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 批量输入 Modal -->
+  <div class="modal-overlay" id="batchModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">批量输入工时</h2>
+        <button class="modal-close" id="closeBatchModal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">选择日期</label>
+          <div class="date-list" id="batchDateList">
+            <!-- 日期列表会动态生成 -->
+          </div>
+          <div class="date-count">已选择 <span id="batchSelectedCount">0</span> 个日期</div>
+        </div>
+
+        <!-- 输入方式 -->
+        <div class="form-group">
+          <label class="form-label">输入方式</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" id="batchInputDirect" name="batchInputMethod" value="direct" checked>
+              <label for="batchInputDirect">直接输入工时</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" id="batchInputRange" name="batchInputMethod" value="range">
+              <label for="batchInputRange">时间范围</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 直接输入模式 -->
+        <div id="batchDirectInputMode">
+          <div class="form-group">
+            <label class="form-label">工作时长（小时）</label>
+            <input type="number" class="input-field" id="batchWorkHours" placeholder="8.5" step="0.5" min="0">
+          </div>
+        </div>
+
+        <!-- 时间范围模式 -->
+        <div id="batchRangeInputMode" class="hidden">
+          <div class="time-inputs">
+            <div class="time-input-group">
+              <div class="time-label start">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                开始时间
+              </div>
+              <input type="time" class="input-field" id="batchStartTime" style="text-align: center;">
+            </div>
+
+            <div class="time-input-group">
+              <div class="time-label end">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                结束时间
+              </div>
+              <input type="time" class="input-field" id="batchEndTime" style="text-align: center;">
+            </div>
+          </div>
+
+          <!-- 自动计算工时 -->
+          <div class="calculated-hours hidden" id="batchCalculatedHours">
+            <div class="calculated-hours-label">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="8" x2="8" y2="16"></line>
+                <line x1="8" y1="8" x2="16" y2="16"></line>
+              </svg>
+              计算工时
+            </div>
+            <div class="calculated-hours-value" id="batchCalculatedHoursValue">0.0小时</div>
+          </div>
+        </div>
+
+        <!-- 时薪 -->
+        <div class="form-group">
+          <label class="form-label">时薪（元/小时）</label>
+          <input type="number" class="input-field" id="batchRate" placeholder="20" step="0.5" min="0">
+        </div>
+
+        <!-- 备注 -->
+        <div class="form-group">
+          <label class="form-label">备注</label>
+          <textarea class="input-field" id="batchNotes" placeholder="工作内容、项目名称等..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-save" id="batchSaveBtn">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/calendar.js"></script>
+</body>
+</html>
+

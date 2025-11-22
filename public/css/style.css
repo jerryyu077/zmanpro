@@ -1,0 +1,1017 @@
+/* ==========================================
+   员工工时管理系统 - 全局样式
+   iOS 风格浅色新拟物 UI
+   ========================================== */
+
+/* ===== CSS Variables ===== */
+:root {
+  /* 主色调 */
+  --bg-primary: #F5F5F7;
+  --card-bg: #FFFFFF;
+  --text-primary: #1D1D1F;
+  --text-secondary: #8E8E93;
+  
+  /* 功能色 */
+  --blue-primary: #007AFF;
+  --blue-light: #E3F2FD;
+  --blue-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --green: #34C759;
+  --orange: #FF9500;
+  --red: #FF3B30;
+  --purple: #AF52DE;
+  
+  /* 新拟物阴影 */
+  --shadow-outer: 8px 8px 16px rgba(163, 177, 198, 0.6),
+                  -8px -8px 16px rgba(255, 255, 255, 0.9);
+  --shadow-inner: inset 4px 4px 8px rgba(163, 177, 198, 0.5),
+                  inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+  --shadow-hover: 4px 4px 8px rgba(163, 177, 198, 0.4),
+                  -4px -4px 8px rgba(255, 255, 255, 0.8);
+  
+  /* 圆角 */
+  --radius-large: 20px;
+  --radius-medium: 16px;
+  --radius-small: 12px;
+  
+  /* 间距 */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+}
+
+/* ===== 全局重置 ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ===== 容器 ===== */
+.container {
+  width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 12px;
+  min-height: 100vh;
+}
+
+/* ===== 卡片基础样式 ===== */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-outer);
+  padding: var(--spacing-lg);
+  transition: all 0.3s ease;
+}
+
+.card-inner {
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-inner);
+  padding: var(--spacing-md);
+}
+
+/* ===== 搜索栏 ===== */
+.search-bar {
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-inner);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.search-bar input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+/* ===== 按钮基础样式 ===== */
+.btn {
+  border: none;
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-outer);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  min-height: 52px;
+}
+
+.btn:active {
+  box-shadow: var(--shadow-hover);
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  color: var(--blue-primary);
+  font-weight: 600;
+}
+
+.btn-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* ===== 添加员工按钮 ===== */
+.add-employee-btn {
+  width: 100%;
+  margin-bottom: 10px;
+  color: var(--blue-primary);
+  font-size: 16px;
+  min-height: 44px;
+  padding: 10px 16px;
+}
+
+/* ===== 员工卡片列表（两列布局） ===== */
+#employeeList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* ===== 员工卡片 ===== */
+.employee-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-outer);
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-card:active {
+  box-shadow: var(--shadow-hover);
+  transform: scale(0.98);
+}
+
+.employee-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.employee-info {
+  flex: 1;
+}
+
+.employee-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.employee-location {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.employee-rate {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+.employee-rate-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--orange);
+}
+
+/* ===== 工时统计卡片（内凹） ===== */
+.hours-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex: 1;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: var(--shadow-inner);
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 9px;
+  color: var(--text-secondary);
+  margin-bottom: 1px;
+  line-height: 1.2;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* ===== 员工卡片底部 ===== */
+.employee-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 2px;
+}
+
+.employee-note {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+  line-height: 1.2;
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-outer);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.icon-btn:active {
+  box-shadow: var(--shadow-inner);
+}
+
+.icon-btn svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+}
+
+/* ===== 日历页顶部导航 ===== */
+.calendar-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 8px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.back-btn, .action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-outer);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.back-btn:active, .action-btn:active {
+  box-shadow: var(--shadow-hover);
+  transform: scale(0.95);
+}
+
+.back-btn svg, .action-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.action-btn.active {
+  background: var(--blue-primary);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+}
+
+.action-btn.active svg {
+  color: white;
+}
+
+.employee-title {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow-outer);
+  padding: 6px 12px;
+  text-align: center;
+}
+
+.employee-title h1 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 0;
+  line-height: 1.3;
+}
+
+.employee-title p {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+/* ===== 月份切换 ===== */
+.month-switcher {
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-outer);
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.month-switcher button {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.month-switcher button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.month-switcher button:active {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.month-switcher h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===== 日历组件 ===== */
+.calendar {
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-outer);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-inner);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  position: relative;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.day.other-month {
+  color: var(--text-secondary);
+  opacity: 0.4;
+}
+
+.day.has-hours {
+  background: var(--blue-gradient);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  color: white;
+}
+
+.day.is-holiday {
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFEBEE 100%);
+}
+
+.day.is-holiday.has-hours {
+  background: var(--blue-gradient);
+}
+
+.day-holiday {
+  font-size: 8px;
+  color: var(--orange);
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding: 0 1px;
+  margin-bottom: 1px;
+}
+
+.day.has-hours .day-holiday {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.day-number {
+  line-height: 1;
+}
+
+.day.has-hours .day-hours {
+  font-size: 9px;
+  margin-top: 1px;
+  line-height: 1;
+}
+
+.day.selected {
+  background: var(--blue-gradient);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  color: white;
+  transform: scale(1.05);
+}
+
+.day.selected .day-holiday {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.day.multi-selected {
+  box-shadow: inset 0 0 0 2px var(--blue-primary);
+  background: var(--card-bg);
+  color: var(--blue-primary);
+}
+
+.day.multi-selected.has-hours {
+  background: var(--blue-light);
+}
+
+.day.multi-selected .day-holiday {
+  color: var(--blue-primary);
+}
+
+.day:active {
+  transform: scale(0.95);
+}
+
+/* ===== 底部提示/表单区域 ===== */
+.form-section {
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-outer);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.form-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  gap: 8px;
+}
+
+.form-title h3 {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  flex: 1;
+  word-break: break-word;
+}
+
+.clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--blue-primary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.placeholder-text {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 16px 0;
+  font-size: 13px;
+}
+
+/* ===== 表单元素 ===== */
+.form-group {
+  margin-bottom: 8px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.input-field {
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-inner);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  box-shadow: inset 0 0 0 2px var(--blue-primary),
+              inset 4px 4px 8px rgba(163, 177, 198, 0.5);
+}
+
+textarea.input-field {
+  min-height: 32px;
+  max-height: 32px;
+  resize: none;
+  font-family: inherit;
+  line-height: 1.2;
+}
+
+/* ===== 单选按钮组 ===== */
+.radio-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.radio-option {
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: var(--shadow-inner);
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radio-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--blue-primary);
+  flex-shrink: 0;
+}
+
+.radio-option label {
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+  line-height: 1.2;
+}
+
+/* ===== 时间输入区域 ===== */
+.time-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.time-label svg {
+  width: 12px;
+  height: 12px;
+}
+
+.time-label.start {
+  color: var(--blue-primary);
+}
+
+.time-label.end {
+  color: var(--red);
+}
+
+.time-input-group input[type="time"] {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 8px;
+}
+
+/* ===== 计算工时卡片 ===== */
+.calculated-hours {
+  background: var(--blue-light);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.calculated-hours-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.calculated-hours-label svg {
+  width: 16px;
+  height: 16px;
+}
+
+.calculated-hours-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--blue-primary);
+}
+
+/* ===== 表单按钮组 ===== */
+.form-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.form-actions.two-buttons {
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-actions .btn {
+  min-height: 40px;
+  padding: 10px 16px;
+  font-size: 15px;
+}
+
+.btn-delete {
+  color: var(--red);
+}
+
+.btn-save {
+  color: var(--blue-primary);
+}
+
+/* ===== 统计卡片 ===== */
+.statistics-card {
+  background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-outer);
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.statistics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.statistics-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statistics-title svg {
+  width: 16px;
+  height: 16px;
+}
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat-item {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+}
+
+.stat-item-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.stat-item-value {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.stat-item-value.blue {
+  color: var(--blue-primary);
+}
+
+.stat-item-value.green {
+  color: var(--green);
+}
+
+.stat-item-value.purple {
+  color: var(--purple);
+}
+
+.stat-item-value.orange {
+  color: var(--orange);
+}
+
+/* ===== Modal 弹窗 ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--card-bg);
+  border-radius: var(--radius-large);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.9);
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.modal-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-outer);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-body {
+  padding: var(--spacing-lg);
+}
+
+/* ===== 批量日期选择列表 ===== */
+.date-list {
+  background: var(--card-bg);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-inner);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: var(--spacing-sm);
+}
+
+.date-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.date-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.date-item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.date-item.disabled:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.date-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: var(--spacing-sm);
+  cursor: pointer;
+  accent-color: var(--blue-primary);
+}
+
+.date-item input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+.date-item-date {
+  flex: 1;
+  font-size: 15px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.date-item.disabled .date-item-date {
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.date-item-weekday {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.date-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* ===== 工具类 ===== */
+.hidden {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+/* ===== 移动端优化 ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+}
+
+/* 小屏幕单列显示 */
+@media (max-width: 480px) {
+  #employeeList {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== 滚动条样式 ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
