@@ -2,7 +2,7 @@
 // API 请求封装
 // ==========================================
 
-const API_BASE = '/api';
+const API_BASE = 'https://zmansys-api.jerryyu077.workers.dev/api';
 
 // API 请求工具函数
 async function request(endpoint, options = {}) {

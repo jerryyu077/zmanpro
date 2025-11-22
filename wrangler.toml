@@ -15,11 +15,11 @@ name = "zmansys-api"
 main = "worker/index.js"
 compatibility_date = "2024-01-01"
 
-# D1 数据库绑定（创建数据库后取消注释并填入真实 ID）
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "zmansys-db"
-# database_id = "xxxx-xxxx-xxxx-xxxx"  # 从 wrangler d1 create 命令输出中获取
+# D1 数据库绑定
+[[d1_databases]]
+binding = "DB"
+database_name = "zmansys-db"
+database_id = "fadfeab6-745f-482b-8006-1ba037d7beec"
 
 # CORS 配置（允许前端访问）
 [vars]
