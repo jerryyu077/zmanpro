@@ -987,9 +987,19 @@ textarea.input-field {
   .container {
     padding: var(--spacing-md);
   }
+  
+  /* 强制手机端也显示两列 */
+  #employeeList {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 /* 所有屏幕都保持两列显示 */
+@media (max-width: 480px) {
+  #employeeList {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
 
 /* ===== 滚动条样式 ===== */
 ::-webkit-scrollbar {
