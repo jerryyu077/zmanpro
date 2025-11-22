@@ -989,12 +989,7 @@ textarea.input-field {
   }
 }
 
-/* 小屏幕单列显示 */
-@media (max-width: 480px) {
-  #employeeList {
-    grid-template-columns: 1fr;
-  }
-}
+/* 所有屏幕都保持两列显示 */
 
 /* ===== 滚动条样式 ===== */
 ::-webkit-scrollbar {
