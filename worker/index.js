@@ -143,7 +143,7 @@ async function getEmployees(env) {
   const { results } = await env.DB.prepare(`
     SELECT id, name, location, default_hourly_rate, notes, created_at
     FROM employees
-    ORDER BY created_at DESC
+    ORDER BY created_at ASC
   `).all();
 
   // 计算每个员工的本周/本月工时
