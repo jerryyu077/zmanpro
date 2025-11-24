@@ -2,7 +2,8 @@
 // API 请求封装
 // ==========================================
 
-const API_BASE = 'https://zmansys-api.jerryyu077.workers.dev/api';
+// 使用相对路径，通过 Pages Functions 代理到 Worker
+const API_BASE = '/api';
 
 // API 请求工具函数
 async function request(endpoint, options = {}) {
