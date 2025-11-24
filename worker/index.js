@@ -9,89 +9,8 @@
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cf-Access-Jwt-Assertion',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
-
-/**
- * Cloudflare Zero Trust JWT 验证
- * 参考: https://developers.cloudflare.com/cloudflare-one/identity/validate-jwt/worker/
- */
-async function verifyJWT(request, env) {
-  // 如果没有配置 TEAM_DOMAIN，则跳过 JWT 验证（本地开发）
-  if (!env.TEAM_DOMAIN) {
-    return true;
-  }
-
-  const token = request.headers.get('Cf-Access-Jwt-Assertion');
-  
-  if (!token) {
-    return false;
-  }
-
-  try {
-    // 获取 Cloudflare Access JWKS
-    const jwksUrl = `https://${env.TEAM_DOMAIN}/cdn-cgi/access/certs`;
-    const jwksResponse = await fetch(jwksUrl);
-    const jwks = await jwksResponse.json();
-
-    // 解码 JWT header
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-      return false;
-    }
-
-    const header = JSON.parse(atob(parts[0]));
-    
-    // 找到匹配的公钥
-    const key = jwks.keys.find(k => k.kid === header.kid);
-    if (!key) {
-      return false;
-    }
-
-    // 使用 Web Crypto API 验证 JWT
-    const encoder = new TextEncoder();
-    const data = encoder.encode(`${parts[0]}.${parts[1]}`);
-    const signature = new Uint8Array(
-      atob(parts[2].replace(/-/g, '+').replace(/_/g, '/'))
-        .split('')
-        .map(c => c.charCodeAt(0))
-    );
-
-    // 导入公钥
-    const cryptoKey = await crypto.subtle.importKey(
-      'jwk',
-      key,
-      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-      false,
-      ['verify']
-    );
-
-    // 验证签名
-    const valid = await crypto.subtle.verify(
-      'RSASSA-PKCS1-v1_5',
-      cryptoKey,
-      signature,
-      data
-    );
-
-    if (!valid) {
-      return false;
-    }
-
-    // 验证过期时间
-    const payload = JSON.parse(atob(parts[1]));
-    const now = Math.floor(Date.now() / 1000);
-    
-    if (payload.exp && payload.exp < now) {
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error('JWT verification error:', error);
-    return false;
-  }
-}
 
 /**
  * 处理 CORS 预检请求
@@ -130,12 +49,6 @@ export default {
     // 处理 OPTIONS 请求
     if (request.method === 'OPTIONS') {
       return handleOptions(request);
-    }
-
-    // JWT 验证（如果配置了 TEAM_DOMAIN）
-    const isAuthorized = await verifyJWT(request, env);
-    if (!isAuthorized) {
-      return errorResponse('Unauthorized - Invalid or missing JWT token', 401);
     }
 
     const url = new URL(request.url);

@@ -25,12 +25,6 @@ database_id = "fadfeab6-745f-482b-8006-1ba037d7beec"
 [vars]
 ALLOWED_ORIGINS = "*"
 
-# Cloudflare Zero Trust JWT 验证（可选）
-# 如果启用 Zero Trust 保护，请设置您的团队域名
-# 格式：yourteam.cloudflareaccess.com
-# 如果不设置，则跳过 JWT 验证
-# TEAM_DOMAIN = "yourteam.cloudflareaccess.com"
-
 # 路由配置（部署到自定义域名时使用）
 # routes = [
 #   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }

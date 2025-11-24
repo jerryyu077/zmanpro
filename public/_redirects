@@ -1,8 +1,0 @@
-# Cloudflare Pages 路由配置
-
-# 处理 HTML 扩展名省略
-/calendar  /calendar.html  200
-
-# API 路由已通过 Functions 处理，无需额外配置
-# /api/*  (handled by /functions/api/[[path]].js)
-
