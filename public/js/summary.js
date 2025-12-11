@@ -215,7 +215,7 @@ async function renderSummary() {
       <td class="name-col">${emp.name}</td>
       <td class="location-col">${emp.location}</td>
       <td class="rate-col">¥${emp.default_rate}</td>
-      <td class="days-col">${emp.work_days > 0 ? emp.work_days + '天' : '-'}</td>
+      <td class="days-col">${emp.work_days > 0 ? emp.work_days : '-'}</td>
       <td class="hours-col">${emp.total_hours > 0 ? emp.total_hours.toFixed(1) + 'h' : '-'}</td>
       <td class="salary-col">${emp.total_salary > 0 ? '¥' + emp.total_salary.toFixed(0) : '-'}</td>
     </tr>
@@ -225,7 +225,7 @@ async function renderSummary() {
   html += `
     <tr class="total-row">
       <td colspan="3">合计</td>
-      <td class="days-col">${totalDays}天</td>
+      <td class="days-col">${totalDays}</td>
       <td class="hours-col">${totalHours.toFixed(1)}h</td>
       <td class="salary-col">¥${totalSalary.toFixed(0)}</td>
     </tr>
