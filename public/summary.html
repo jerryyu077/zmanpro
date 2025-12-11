@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="light-content">
   <title>汇总报告</title>
-  <link rel="stylesheet" href="css/style.css?v=5.2">
+  <link rel="stylesheet" href="css/style.css?v=5.3">
   <style>
     /* 汇总报告页专用样式 */
     .summary-header {
@@ -160,10 +160,13 @@
     
     .summary-table .name-col {
       font-weight: 600;
-      max-width: 60px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    }
+    
+    .summary-table .days-col {
+      text-align: right;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 12px;
     }
     
     .summary-table .location-col {
@@ -274,6 +277,7 @@
             <th>姓名</th>
             <th>地点</th>
             <th style="text-align:right">时薪</th>
+            <th style="text-align:right">天数</th>
             <th style="text-align:right">工时</th>
             <th style="text-align:right">工资</th>
           </tr>
@@ -285,9 +289,9 @@
     </div>
   </div>
 
-  <script src="js/api.js?v=5.2"></script>
-  <script src="js/utils.js?v=5.2"></script>
-  <script src="js/summary.js?v=5.2"></script>
+  <script src="js/api.js?v=5.3"></script>
+  <script src="js/utils.js?v=5.3"></script>
+  <script src="js/summary.js?v=5.3"></script>
 </body>
 </html>
 

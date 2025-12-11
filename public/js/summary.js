@@ -172,7 +172,7 @@ async function renderSummary() {
       default_rate: emp.default_hourly_rate,
       total_hours: 0,
       total_salary: 0,
-      record_count: 0
+      work_days: 0
     };
   });
   
@@ -182,7 +182,7 @@ async function renderSummary() {
       const emp = summaryByEmployee[record.employee_id];
       emp.total_hours += record.total_hours || 0;
       emp.total_salary += (record.total_hours || 0) * (record.hourly_rate || emp.default_rate);
-      emp.record_count++;
+      emp.work_days++;
     }
   });
   
@@ -203,12 +203,19 @@ async function renderSummary() {
     }
   });
   
+  // 计算总工作天数
+  let totalDays = 0;
+  summaryList.forEach(emp => {
+    totalDays += emp.work_days;
+  });
+  
   // 渲染表格行（显示所有员工，包括没有数据的）
   let html = summaryList.map(emp => `
     <tr onclick="window.location.href='calendar?id=${emp.id}'">
       <td class="name-col">${emp.name}</td>
       <td class="location-col">${emp.location}</td>
       <td class="rate-col">¥${emp.default_rate}</td>
+      <td class="days-col">${emp.work_days > 0 ? emp.work_days + '天' : '-'}</td>
       <td class="hours-col">${emp.total_hours > 0 ? emp.total_hours.toFixed(1) + 'h' : '-'}</td>
       <td class="salary-col">${emp.total_salary > 0 ? '¥' + emp.total_salary.toFixed(0) : '-'}</td>
     </tr>
@@ -218,6 +225,7 @@ async function renderSummary() {
   html += `
     <tr class="total-row">
       <td colspan="3">合计</td>
+      <td class="days-col">${totalDays}天</td>
       <td class="hours-col">${totalHours.toFixed(1)}h</td>
       <td class="salary-col">¥${totalSalary.toFixed(0)}</td>
     </tr>
