@@ -122,6 +122,13 @@ export default {
         return await getStatistics(env, body);
       }
 
+      // GET /api/work-records/summary - 获取日期范围内所有员工的工时记录（汇总报告用）
+      if (path === '/api/work-records/summary' && method === 'GET') {
+        const startDate = url.searchParams.get('start');
+        const endDate = url.searchParams.get('end');
+        return await getSummaryRecords(env, startDate, endDate);
+      }
+
       // 404
       return errorResponse('API endpoint not found', 404);
 
@@ -393,6 +400,37 @@ async function getStatistics(env, data) {
       total_salary: result.total_salary,
       avg_rate: result.avg_rate
     }
+  });
+}
+
+/**
+ * 获取日期范围内所有员工的工时记录（汇总报告用）
+ */
+async function getSummaryRecords(env, startDate, endDate) {
+  if (!startDate || !endDate) {
+    return errorResponse('Required params: start, end');
+  }
+
+  // 获取日期范围内的所有工时记录
+  const { results } = await env.DB.prepare(`
+    SELECT 
+      wr.id,
+      wr.employee_id,
+      wr.date,
+      wr.hours as total_hours,
+      wr.hourly_rate,
+      wr.notes,
+      e.name as employee_name,
+      e.location as employee_location
+    FROM work_records wr
+    JOIN employees e ON wr.employee_id = e.id
+    WHERE wr.date >= ? AND wr.date <= ?
+    ORDER BY wr.date ASC
+  `).bind(startDate, endDate).all();
+
+  return jsonResponse({
+    success: true,
+    data: results
   });
 }
 

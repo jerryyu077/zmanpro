@@ -102,3 +102,8 @@ async function getStatistics(employeeId, dates) {
   });
 }
 
+// 获取日期范围内所有员工的工时记录（汇总报告用）
+async function getSummaryRecords(startDate, endDate) {
+  return request(`/work-records/summary?start=${startDate}&end=${endDate}`);
+}
+

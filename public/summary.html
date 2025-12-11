@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="light-content">
+  <title>汇总报告</title>
+  <link rel="stylesheet" href="css/style.css?v=5.0">
+  <style>
+    /* 汇总报告页专用样式 */
+    .summary-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    
+    .summary-header h1 {
+      flex: 1;
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+      margin: 0;
+    }
+    
+    .date-picker-section {
+      background: var(--card-bg);
+      border-radius: var(--radius-medium);
+      box-shadow: var(--shadow-outer);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .date-picker-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .date-picker-row span {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .date-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 10px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-inner);
+      font-size: 13px;
+      color: var(--text-primary);
+      text-align: center;
+    }
+    
+    .quick-select {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    
+    .quick-btn {
+      flex: 1;
+      min-width: 60px;
+      padding: 6px 8px;
+      border: none;
+      border-radius: 8px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-outer);
+      font-size: 11px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .quick-btn:active {
+      box-shadow: var(--shadow-inner);
+      transform: scale(0.98);
+    }
+    
+    .quick-btn.active {
+      background: var(--blue-primary);
+      color: white;
+    }
+    
+    /* 汇总统计卡片 */
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .summary-stat-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--shadow-outer);
+      padding: 10px 8px;
+      text-align: center;
+    }
+    
+    .summary-stat-label {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    
+    .summary-stat-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .summary-stat-value.blue { color: var(--blue-primary); }
+    .summary-stat-value.green { color: var(--green); }
+    .summary-stat-value.orange { color: var(--orange); }
+    
+    /* 表格容器 */
+    .table-container {
+      background: var(--card-bg);
+      border-radius: var(--radius-medium);
+      box-shadow: var(--shadow-outer);
+      overflow: hidden;
+    }
+    
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    
+    .summary-table th {
+      background: var(--bg-primary);
+      padding: 10px 6px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      white-space: nowrap;
+    }
+    
+    .summary-table td {
+      padding: 10px 6px;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+      color: var(--text-primary);
+    }
+    
+    .summary-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .summary-table tr:active {
+      background: rgba(0,0,0,0.02);
+    }
+    
+    .summary-table .name-col {
+      font-weight: 600;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .summary-table .location-col {
+      max-width: 50px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+    
+    .summary-table .rate-col {
+      text-align: right;
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+    
+    .summary-table .hours-col {
+      text-align: right;
+      font-weight: 600;
+      color: var(--blue-primary);
+    }
+    
+    .summary-table .salary-col {
+      text-align: right;
+      font-weight: 600;
+      color: var(--orange);
+    }
+    
+    /* 表格底部汇总行 */
+    .summary-table .total-row {
+      background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+    }
+    
+    .summary-table .total-row td {
+      font-weight: 700;
+      border-bottom: none;
+      padding: 12px 6px;
+    }
+    
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部导航 -->
+    <div class="summary-header">
+      <button class="back-btn" onclick="window.location.href='/'">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+      <h1>汇总报告</h1>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <!-- 日期选择器 -->
+    <div class="date-picker-section">
+      <div class="date-picker-row">
+        <input type="date" class="date-input" id="startDate">
+        <span>至</span>
+        <input type="date" class="date-input" id="endDate">
+      </div>
+      <div class="quick-select">
+        <button class="quick-btn" data-range="week">本周</button>
+        <button class="quick-btn" data-range="month" id="defaultRange">本月</button>
+        <button class="quick-btn" data-range="lastMonth">上月</button>
+        <button class="quick-btn" data-range="year">今年</button>
+      </div>
+    </div>
+
+    <!-- 汇总统计 -->
+    <div class="summary-stats">
+      <div class="summary-stat-card">
+        <div class="summary-stat-label">员工人数</div>
+        <div class="summary-stat-value blue" id="totalEmployees">0</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-label">总工时</div>
+        <div class="summary-stat-value green" id="totalHours">0h</div>
+      </div>
+      <div class="summary-stat-card">
+        <div class="summary-stat-label">总工资</div>
+        <div class="summary-stat-value orange" id="totalSalary">¥0</div>
+      </div>
+    </div>
+
+    <!-- 表格 -->
+    <div class="table-container">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>姓名</th>
+            <th>地点</th>
+            <th style="text-align:right">时薪</th>
+            <th style="text-align:right">工时</th>
+            <th style="text-align:right">工资</th>
+          </tr>
+        </thead>
+        <tbody id="summaryTableBody">
+          <!-- 动态生成 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=5.0"></script>
+  <script src="js/utils.js?v=5.0"></script>
+  <script src="js/summary.js?v=5.0"></script>
+</body>
+</html>
+
