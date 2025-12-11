@@ -188,7 +188,7 @@ async function renderSummary() {
   
   // 保持原始顺序（按 created_at ASC，与 index.html 一致）
   // employees 数组已经是按 created_at ASC 排序的
-  const summaryList = employees.map(emp => summaryByEmployee[emp.id]);
+  const summaryList = employees.map(emp => summaryByEmployee[emp.id]).filter(emp => emp);
   
   // 计算总计（只计算有工时的员工）
   let totalEmployeesWithHours = 0;
