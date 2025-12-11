@@ -186,49 +186,31 @@ async function renderSummary() {
     }
   });
   
-  // 转换为数组并排序（按工资降序）
-  const summaryList = Object.values(summaryByEmployee)
-    .filter(emp => emp.total_hours > 0)
-    .sort((a, b) => b.total_salary - a.total_salary);
+  // 保持原始顺序（按 created_at ASC，与 index.html 一致）
+  // employees 数组已经是按 created_at ASC 排序的
+  const summaryList = employees.map(emp => summaryByEmployee[emp.id]);
   
-  // 计算总计
-  let totalEmployeesWithHours = summaryList.length;
+  // 计算总计（只计算有工时的员工）
+  let totalEmployeesWithHours = 0;
   let totalHours = 0;
   let totalSalary = 0;
   
   summaryList.forEach(emp => {
-    totalHours += emp.total_hours;
-    totalSalary += emp.total_salary;
+    if (emp.total_hours > 0) {
+      totalEmployeesWithHours++;
+      totalHours += emp.total_hours;
+      totalSalary += emp.total_salary;
+    }
   });
   
-  // 渲染表格行
-  if (summaryList.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5">
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            <div>该时间段内暂无工时记录</div>
-          </div>
-        </td>
-      </tr>
-    `;
-    updateStats(0, 0, 0);
-    return;
-  }
-  
+  // 渲染表格行（显示所有员工，包括没有数据的）
   let html = summaryList.map(emp => `
     <tr onclick="window.location.href='calendar?id=${emp.id}'">
       <td class="name-col">${emp.name}</td>
       <td class="location-col">${emp.location}</td>
       <td class="rate-col">¥${emp.default_rate}</td>
-      <td class="hours-col">${emp.total_hours.toFixed(1)}h</td>
-      <td class="salary-col">¥${emp.total_salary.toFixed(0)}</td>
+      <td class="hours-col">${emp.total_hours > 0 ? emp.total_hours.toFixed(1) + 'h' : '-'}</td>
+      <td class="salary-col">${emp.total_salary > 0 ? '¥' + emp.total_salary.toFixed(0) : '-'}</td>
     </tr>
   `).join('');
   
