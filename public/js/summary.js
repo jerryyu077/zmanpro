@@ -52,38 +52,52 @@ function setDateRange(range) {
   const today = new Date();
   let start, end;
   
+  // 获取本月和上月的年份和月份
+  const thisYear = today.getFullYear();
+  const thisMonth = today.getMonth();
+  
+  // 计算上月的年份和月份
+  let lastMonthYear = thisYear;
+  let lastMonth = thisMonth - 1;
+  if (lastMonth < 0) {
+    lastMonth = 11;
+    lastMonthYear = thisYear - 1;
+  }
+  
+  // 获取上月的最后一天
+  const lastDayOfLastMonth = new Date(thisYear, thisMonth, 0).getDate();
+  // 获取本月的最后一天
+  const lastDayOfThisMonth = new Date(thisYear, thisMonth + 1, 0).getDate();
+  
   switch (range) {
-    case 'week':
-      // 本周（周一到周日）
-      const dayOfWeek = today.getDay();
-      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      start = new Date(today);
-      start.setDate(today.getDate() + diffToMonday);
-      end = new Date(start);
-      end.setDate(start.getDate() + 6);
+    case 'lastMonth1':
+      // 上月1-15
+      start = new Date(lastMonthYear, lastMonth, 1);
+      end = new Date(lastMonthYear, lastMonth, 15);
       break;
       
-    case 'month':
-      // 本月
-      start = new Date(today.getFullYear(), today.getMonth(), 1);
-      end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    case 'lastMonth2':
+      // 上月16-末（考虑大小月和二月）
+      start = new Date(lastMonthYear, lastMonth, 16);
+      end = new Date(lastMonthYear, lastMonth, lastDayOfLastMonth);
       break;
       
-    case 'lastMonth':
-      // 上月
-      start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-      end = new Date(today.getFullYear(), today.getMonth(), 0);
+    case 'thisMonth1':
+      // 本月1-15
+      start = new Date(thisYear, thisMonth, 1);
+      end = new Date(thisYear, thisMonth, 15);
       break;
       
-    case 'year':
-      // 今年
-      start = new Date(today.getFullYear(), 0, 1);
-      end = new Date(today.getFullYear(), 11, 31);
+    case 'thisMonth2':
+      // 本月16-末（考虑大小月和二月）
+      start = new Date(thisYear, thisMonth, 16);
+      end = new Date(thisYear, thisMonth, lastDayOfThisMonth);
       break;
       
     default:
-      start = new Date(today.getFullYear(), today.getMonth(), 1);
-      end = today;
+      // 默认本月1-15
+      start = new Date(thisYear, thisMonth, 1);
+      end = new Date(thisYear, thisMonth, 15);
   }
   
   startDate = formatDate(start);

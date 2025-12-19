@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="light-content">
   <title>汇总报告</title>
-  <link rel="stylesheet" href="css/style.css?v=5.3">
+  <link rel="stylesheet" href="css/style.css?v=5.5">
   <style>
     /* 汇总报告页专用样式 */
     .summary-header {
@@ -246,10 +246,10 @@
         <input type="date" class="date-input" id="endDate">
       </div>
       <div class="quick-select">
-        <button class="quick-btn" data-range="week">本周</button>
-        <button class="quick-btn" data-range="month" id="defaultRange">本月</button>
-        <button class="quick-btn" data-range="lastMonth">上月</button>
-        <button class="quick-btn" data-range="year">今年</button>
+        <button class="quick-btn" data-range="lastMonth1">上月1-15</button>
+        <button class="quick-btn" data-range="lastMonth2">上月16-末</button>
+        <button class="quick-btn" data-range="thisMonth1" id="defaultRange">本月1-15</button>
+        <button class="quick-btn" data-range="thisMonth2">本月16-末</button>
       </div>
     </div>
 
@@ -289,9 +289,9 @@
     </div>
   </div>
 
-  <script src="js/api.js?v=5.3"></script>
-  <script src="js/utils.js?v=5.3"></script>
-  <script src="js/summary.js?v=5.4"></script>
+  <script src="js/api.js?v=5.5"></script>
+  <script src="js/utils.js?v=5.5"></script>
+  <script src="js/summary.js?v=5.5"></script>
 </body>
 </html>
 
